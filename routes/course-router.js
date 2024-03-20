@@ -1,11 +1,8 @@
 import express from "express";
 import {getLogin,getCourse,getCoursePage,postLogin, deleteCourse,getCourseId,  postCourse, patchCourseId } from '../controllers/course-controllers.js'
-import morgan from "morgan";
+
 
     const router= express.Router();
-
-    
-
 
 
     // route for login page
@@ -15,7 +12,7 @@ import morgan from "morgan";
     router.post('/login',postLogin );
     
     //route for course page
-    router.get('/course', getCoursePage);
+    router.get('/course' , getCoursePage);
     
 //post request for new course
 router.post('/courses',postCourse )
