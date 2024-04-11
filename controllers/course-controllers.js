@@ -1,10 +1,12 @@
 import express from 'express';
-import { readFile } from 'fs';
+import { PrismaClient } from '@prisma/client';
+import { readFile, writeFile } from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import  session  from 'express-session';
 
 const control= express( )
+const prisma= new PrismaClient();
 control.use(express.json());
 
 // Configure session middleware
@@ -16,21 +18,12 @@ control.use(session({
 
 // getting directory name of current module
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
+const courseFile= path.join(__dirname,"../course.json")
 control.use(express.static(path.join(__dirname, '../Public')));
 control.use(express.urlencoded({ extended: true }));
 
-//Data for courses
-let courses = [
-  { id: 1, title: 'Back end', description: 'Learning server side software engineering', instructor: 'Joachim', price: 100, createdAt: '12:30PM' },
-  { id: 2, title: 'Front end', description: 'Learning HTML, CSS, React, and TypeScript software engineering', instructor: 'Joachim', price: 100, createdAt: '02:30AM' },
-  { id: 3, title: 'Database Management', description: 'Learning database management concepts and SQL queries', instructor: 'Joachim', price: 100, createdAt: '12:30PM' },
-  { id: 4, title: 'Data Structures and Algorithms', description: 'Learning fundamental data structures and algorithms', instructor: 'Joachim', price: 100, createdAt: '12:30PM' },
-  { id: 5, title: 'Network Security', description: 'Learning network security principles and practices', instructor: 'Joachim', price: 100, createdAt: '12:30PM' }
-];
 
 
-//middleware authentication
 
 
 //control static files from the ../Public folder
@@ -59,55 +52,78 @@ const getCoursePage=(req, res) => {
 } ;
 
 //post course
-const postCourse=(req,res)=>{
-    let newCourse=req.body;
-    courses= courses.concat(newCourse);
-    res.send(courses);
-    console.log("Course added.");
+const postCourse=async (req,res)=>{
+    try {
+      let newCourse=await prisma.course.create({
+        data: req.body});
+      res.json({data: newCourse});
+      console.log("Course added.");
+
+    } catch (error) {
+      console.log(error)
+      res.status(400).json('course not added')
+    }
   }
+
+
   //getcourse
-  const getCourse=(req,res)=>{
-    res.send(courses);
+  const getCourse=async (req,res)=>{
+    const course= await prisma.course.findMany();
+    res.json(course);
   }
 //getcourse by ID
-  const getCourseId=(req,res)=>{
+  const getCourseId=async(req,res)=>{
     let reqId=parseInt(req.params.courseId);
-    let get=courses.find(course=>course.id===reqId)
-
-        if(get){
-            res.send(get)
-            console.log(get);
-        }else{res.status(404).send("Course not found")
-        }
+   try {
+    const getCourse= await prisma.course.findUnique(
+      {
+        where:{id:reqId}
+      }
+    )
+    res.json(getCourse)
+    
+   } catch (error) {
+    console.log(error)
+    
+    res.json({message:"Does not exist"})
+    
+   }
     }
 
  // patch course
-  const patchCourseId=(req,res)=>{
+  const patchCourseId= async (req,res)=>{
     let reqId=parseInt(req.params.courseId);
-    let update = courses.find(course=>course.id===reqId)
-  
-    if (update) {
-            update.price=req.body.price;
-            res.send(update)
-            
-        } else {
-            res.send("Course not found")
-        }
+   
+    try {
+      const updatedCourse= await prisma.course.update(
+        {where:{id:reqId},
+        
+        data:req.body
+        
+      }
+      );
+      res.json({data:updatedCourse})
+
+    } catch (error) {
+      console.log(error)
+      res.status(500).json('course not updated')
+    }
       }
   
       //delete course by Id 
-const deleteCourse=(req,res)=>{
-    let reqId= parseInt(req.params.courseId);
-let index=courses.find(course=>course.id===reqId)
-if (index) {
-    let deleteId= courses.splice(index, 1);
-    res.send(deleteId);
-    console.log("Deleted course:", deleteId);
-    console.log("Remaining courses:", courses);
-    
-} else {
-    res.status(404).send("Course not found");
-}
+const deleteCourse=async (req,res)=>{
+    let reqId=  parseInt(req.params.courseId);
+    try {
+        const deleteById=await prisma.course.delete({
+          where:{id:reqId}
+        }
+        )
+        res.json({data:deleteById})
+      
+    } catch (error) {
+      console.log(error)
+      res.json({message:"Does not exist"})
+    }
   } 
 
 
