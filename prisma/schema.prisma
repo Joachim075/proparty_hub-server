@@ -13,20 +13,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int     @id @default(autoincrement())
-  name     String
-  email    String  @unique
-  age      Int
-  Course   Course? @relation(fields: [courseId], references: [id])
-  courseId Int?
+
+model Agent {
+  id        Int       @id @default(autoincrement())
+  name      String
+  contact   String    // Changed to String for consistency
+  email     String    @unique
+  age       Int
+  password  String
+  proparty  Property? @relation(fields: [propartyId], references: [id])
+  propartyId Int?
+  role      Role      @default(TENANT)
 }
 
-model Course {
-  id         Int    @id @default(autoincrement())
-  name       String
-  decription String @default("")
-  price      String
-  createdAt DateTime @default(now())
-  users      User[]
+model Property { // Corrected spelling to Property
+  id           Int            @id @default(autoincrement())
+  contact      String         @default("")
+  status       Status         @default(FOR_RENT)
+  purpose      Purpose        @default(RESIDENTIALS)
+  location     String         @default("")
+  description  String         @default("") // Added a default value for description
+  price        String         @default("")
+  rooms        String         @default("")
+  washroom     WashroomType   @default(INDOOR)
+  electricity  ElectricityMode @default(Private_YAKA)
+  water        Water          @default(INDOOR)
+  createdAt    DateTime       @default(now())
+  agents       Agent[]        // Changed field name to agents for clarity
+}
+
+enum Water {
+  INDOOR
+  OUTDOOR
+}
+
+enum Status {
+  FOR_SALE
+  FOR_RENT
+}
+
+enum Purpose {
+  RESIDENTIALS
+  BUSINESS
+}
+
+enum ElectricityMode {
+  Private_YAKA
+  Controlled_Electricity
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  LANDLORD
+  TENANT
+}
+
+enum WashroomType {
+  INDOOR
+  OUTDOOR
 }
