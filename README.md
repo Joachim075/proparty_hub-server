@@ -1,13 +1,14 @@
-Property_Hub
-Property_hub is an express web server with a postgress database, the server has properties and users. Used CORS policy,JWT,Joi,Morgan middle middleware
+# Property_Hub
 
-property
-Property end_points with CRUD operations on the proparties, here one can Create, Read, Update and Delete.
-With data validation using Joi on Creating.
+Property_Hub is an Express web server with a PostgreSQL database. The server manages properties and users. It employs CORS policy, JWT, Joi, and Morgan middleware.
 
-users
-Users end_points for making CRUD operations on the users, here one can Create, Read, Update and Delete.
-With data validation using Joi on Creating and bcrypt on user passwords and JWT on user login.
+## Property
+
+Property endpoints support CRUD operations on properties. You can Create, Read, Update, and Delete properties. Data validation is implemented using Joi when creating properties.
+
+## Users
+
+User endpoints support CRUD operations on users. You can Create, Read, Update, and Delete users. Data validation is implemented using Joi when creating users. Additionally, bcrypt is used for user passwords, and JWT is utilized for user login.
 
 
 
