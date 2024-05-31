@@ -3,22 +3,26 @@ import { userRouter } from "./routes/user-router.js";
 import morgan from "morgan";
 import cors from "cors";
 import propartyRouter from "./routes/proparty-router.js";
+import helmet from "helmet"
 
 const server= express();
 server.use(morgan("dev"));
 const PORT= process.env.PORT || 4000;
 
 server.use(cors());
+server.use(helmet())
 server.use(morgan('dev'));
 server.use(express.json());
 
-server.get("/proparty_hub ", (req, res) => {
+server.get("/", (req, res) => {
   
-    res.redirect("/login");
+      res.json({message: "Hello, Welcome to Property_Hub"})
+
+
   });
 
-server.use("/proparty_hub", propartyRouter);
-server.use("/proparty_hub",userRouter)
+server.use( propartyRouter);
+server.use(userRouter)
 
 server.listen(PORT,()=>{
     console.log(`Proparty_Hub server is running on port ${PORT}` )
