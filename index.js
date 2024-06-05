@@ -4,10 +4,11 @@ import morgan from "morgan";
 import cors from "cors";
 import propartyRouter from "./routes/proparty-router.js";
 import helmet from "helmet"
+import "dotenv/config"
 
 const server= express();
 server.use(morgan("dev"));
-const PORT= process.env.PORT || 4000;
+const PORT= process.env.PORT || 4000
 
 server.use(cors());
 server.use(helmet())
